@@ -1,10 +1,19 @@
-import {createStore} from 'redux';
-import {combineReducers} from 'redux';
-import {persistStore, persistReducer} from 'redux-persist';
+import {createStore, applyMiddleware, compose} from 'redux';
+import {persistStore, persistCombineReducers} from 'redux-persist';
 import AsyncStorage from '@react-native-community/async-storage';
+import createSagaMiddleware from 'redux-saga';
 
 // import collection of reducers
 import rootReducer from './reducers';
+
+// import saga watchers
+import sagas from './sagas';
+
+// create the saga middleware
+const middleware = [];
+const sagaMiddleware = createSagaMiddleware();
+middleware.push(sagaMiddleware);
+const enhancers = [applyMiddleware(...middleware)];
 
 const persistConfig = {
   key: 'root',
@@ -14,12 +23,18 @@ const persistConfig = {
   debug: true, //to get useful logging
 };
 
-const reducers = combineReducers(rootReducer);
+const reducers = persistCombineReducers(persistConfig, rootReducer);
 
-const persistedReducer = persistReducer(persistConfig, reducers);
+const config: any = {enhancers};
+
+let store = createStore(reducers, undefined, compose(...enhancers));
+let persistor = persistStore(store, config, () => {
+  // console.log('store/index', store.getState());
+});
+
+// then run the saga
+sagaMiddleware.run(sagas);
 
 export default () => {
-  let store = createStore(persistedReducer);
-  let persistor = persistStore(store);
   return {store, persistor};
 };

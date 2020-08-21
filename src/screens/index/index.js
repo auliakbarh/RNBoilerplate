@@ -3,7 +3,12 @@ import {SafeAreaView, Text, Button, View, StyleSheet} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 
 // import actions
-import {setToken, resetToken} from '../../store/actions/authAction';
+import {
+  setToken,
+  resetToken,
+  loginRequest,
+  logoutRequest,
+} from '../../store/actions/authAction';
 
 export default function (props) {
   const dispatch = useDispatch();
@@ -22,6 +27,17 @@ export default function (props) {
             onPress={() => dispatch(resetToken())}
           />
         </View>
+      </View>
+
+      <View style={styles.containerTokenButtons}>
+        <Button
+          title={'LOGIN'}
+          onPress={() => dispatch(loginRequest().call())}
+        />
+        <Button
+          title={'LOGOUT'}
+          onPress={() => dispatch(logoutRequest().call())}
+        />
       </View>
     </SafeAreaView>
   );
