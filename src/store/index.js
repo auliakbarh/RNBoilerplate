@@ -1,10 +1,25 @@
 import {createStore} from 'redux';
 import {combineReducers} from 'redux';
+import {persistStore, persistReducer} from 'redux-persist';
+import AsyncStorage from '@react-native-community/async-storage';
 
-import authReducer from './reducers/authReducer';
+// import collection of reducers
+import rootReducer from './reducers';
 
-const rootReducer = combineReducers({
-  auth: authReducer,
-});
+const persistConfig = {
+  key: 'root',
+  storage: AsyncStorage,
+  blacklist: [],
+  whitelist: ['auth'],
+  debug: true, //to get useful logging
+};
 
-export default createStore(rootReducer);
+const reducers = combineReducers(rootReducer);
+
+const persistedReducer = persistReducer(persistConfig, reducers);
+
+export default () => {
+  let store = createStore(persistedReducer);
+  let persistor = persistStore(store);
+  return {store, persistor};
+};
