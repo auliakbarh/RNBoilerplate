@@ -1,6 +1,10 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
+import {Provider} from 'react-redux';
+
+// import store
+import store from '../store';
 
 // import screen names
 import * as screenNames from './screenNames';
@@ -12,10 +16,15 @@ const Stack = createStackNavigator();
 
 export default function AppNavigator(props) {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name={screenNames.INDEX_SCREEN} component={MainScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name={screenNames.INDEX_SCREEN}
+            component={MainScreen}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 }
